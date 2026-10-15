@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Currency {
+  USD
+  EUR
+  GBP
+  INR
+}
+
+enum JobLevel {
+  JUNIOR
+  MID
+  SENIOR
+  LEAD
+  PRINCIPAL
+}
+
+enum UserRole {
+  HR_MANAGER
+  EMPLOYEE
+}
+
+model User {
+  id                Int                 @id @default(autoincrement())
+  email             String              @unique @db.VarChar(320)
+  passwordHash      String              @db.VarChar(255)
+  role              UserRole            @default(EMPLOYEE)
+  isActive          Boolean             @default(true)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  salaryAudits      SalaryChangeAudit[]
+}
+
+model Employee {
+  id            Int             @id @default(autoincrement())
+  employeeCode  String          @unique @db.VarChar(24)
+  fullName      String          @db.VarChar(160)
+  department    String          @db.VarChar(100)
+  country       String          @db.VarChar(100)
+  jobTitle      String          @db.VarChar(120)
+  level         JobLevel
+  hireDate      DateTime        @db.Date
+  currency      Currency
+  salary        Decimal         @db.Decimal(14, 2)
+  effectiveDate DateTime        @db.Date
+  isActive      Boolean         @default(true)
+  salaryHistory SalaryHistory[]
+  salaryAudits  SalaryChangeAudit[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([country, department])
+  @@index([isActive])
+  @@index([jobTitle, country, currency])
+  @@index([currency, salary])
+  @@index([fullName])
+  @@index([level])
+}
+
+model SalaryHistory {
+  id            Int      @id @default(autoincrement())
+  employeeId    Int
+  salary        Decimal  @db.Decimal(14, 2)
+  currency      Currency
+  effectiveDate DateTime @db.Date
+  createdAt     DateTime @default(now())
+  employee      Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, effectiveDate])
+}
+
+model SalaryChangeAudit {
+  id                Int      @id @default(autoincrement())
+  actorUserId       Int
+  employeeId        Int
+  previousSalary    Decimal  @db.Decimal(14, 2)
+  newSalary         Decimal  @db.Decimal(14, 2)
+  previousCurrency  Currency
+  newCurrency       Currency
+  effectiveDate     DateTime @db.Date
+  reason            String   @db.VarChar(500)
+  changedAt         DateTime @default(now())
+  actor             User     @relation(fields: [actorUserId], references: [id], onDelete: Restrict)
+  employee          Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([actorUserId, changedAt])
+  @@index([employeeId, changedAt])
+}
