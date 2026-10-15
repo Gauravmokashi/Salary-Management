@@ -142,7 +142,7 @@ AI was used as a development assistant, not as the final authority. I reviewed t
 
 **AI contribution:** Assisted with documentation review, consistency checks, architecture explanations, setup instructions, and identifying unsupported claims.
 
-**Engineering decision:** Preserved the actual development chronology: the requirements document was written retrospectively, after the initial working application. Deployment and demo recording remain outstanding; a local benchmark is recorded in `DECISIONS.md`.
+**Engineering decision:** Preserved the actual development chronology: the requirements document was written retrospectively, after the initial working application. The application is now deployed; a video demo remains outstanding. A local benchmark is recorded in `DECISIONS.md`.
 
 ## 3. Verification and Evidence
 
@@ -150,16 +150,15 @@ AI-generated suggestions were reviewed against the implementation and available 
 
 | Check | Recorded status |
 |---|---|
-| Source and schema review | Performed during development and documentation review |
-| Test suite | An attempted `npm test` run stopped because Jest was unavailable in the environment |
-| Build and lint | Not verified for the exact uncommitted snapshot |
-| PostgreSQL integration tests | Not verified for the exact uncommitted snapshot |
+| Source and schema review | Performed against application revision `9038844` on `main` during documentation review |
+| Automated test suite | Test files and CI workflow are present. No passing test run is recorded for revision `9038844`; an earlier `npm test` attempt stopped because Jest was unavailable in that environment. |
+| Production build and deploy | Render reported both API and frontend services live. Render's deployed commit SHA was not recorded. |
+| Manual production check | HR sign-in and the seeded employee directory were confirmed working at the deployed URLs after aligning the API and seed with the same Neon database branch. |
+| Lint and PostgreSQL integration tests | No successful run is recorded for revision `9038844`. |
 | Local API performance | Benchmarked over 50 requests per endpoint against 10,002 employee rows; details in `DECISIONS.md`. Not an exact 10,000-row snapshot or production benchmark. |
-| Deployment and demo recording | Not included in the reviewed snapshot |
+| Video demo | Not recorded yet. |
 
-The reviewed working tree contained uncommitted changes based on commit `283c022f691e9ee09a7d0f063767a062dded64d8`. Therefore, the recorded checks do not establish that the complete final working tree passed.
-
-A successful CI run for a committed revision is evidence for that revision only; it must not be generalized to later uncommitted changes.
+The repository was reinitialized after earlier development, so those commits are unavailable. Application revision `9038844` was represented by the fresh repository's initial commit. Later documentation updates do not reconstruct the original incremental development. No test or lint result should be inferred from the presence of test files or CI configuration alone.
 
 ## 4. What I Deliberately Did Not Delegate to AI
 
@@ -173,7 +172,7 @@ AI accelerated implementation and review, but the application was not considered
 
 ## 5. Known Limitations
 
-The reviewed submission does not include a live deployment URL or recorded demo. Live FX integration, payroll execution, SSO, password reset, login rate limiting, and server-side token revocation are outside the current scope.
+The application is deployed at [salary-management-fe.onrender.com](https://salary-management-fe.onrender.com), with API health at [salary-management-bs10.onrender.com/api/health](https://salary-management-bs10.onrender.com/api/health). A video demo remains to be recorded. Live FX integration, payroll execution, SSO, password reset, login rate limiting, and server-side token revocation are outside the current scope.
 
 Refer to [DECISIONS.md](DECISIONS.md) for architectural trade-offs and performance status.
 

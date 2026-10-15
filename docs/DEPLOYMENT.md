@@ -1,38 +1,62 @@
 # Deployment
 
-The browser only talks to the Next.js app. Next.js proxies `/api/*` to the NestJS API
-(`API_PROXY_TARGET`), so the `SameSite=Strict` session cookie works even when the two run on different hosts.
+## Live deployment
 
-## Any Node host (e.g. Render, Railway, Fly.io)
+- **Frontend:** [https://salary-management-fe.onrender.com](https://salary-management-fe.onrender.com)
+- **API health:** [https://salary-management-bs10.onrender.com/api/health](https://salary-management-bs10.onrender.com/api/health)
 
-**Database:** a managed PostgreSQL 16 instance. Copy its connection string.
+The browser calls the Next.js app on one origin. Next.js proxies `/api/*` to NestJS so the `SameSite=Strict` session cookie works across the separate services.
 
-**API service** (repository root as the working directory — it is an npm workspace):
+## Render configuration
+
+Both services use the repository root as their working directory and deploy from `main`.
+
+### API web service
 
 | Setting | Value |
 |---|---|
-| Build | `npm ci --legacy-peer-deps && npm run prisma:generate --workspace backend && npm run build --workspace backend` |
-| Pre-deploy | `npm run db:deploy --workspace backend` (applies committed migrations; never resets data) |
-| Start | `npm run start:prod --workspace backend` |
-| Health check | `GET /api/health` (returns 503 when the database is unreachable) |
-| Env | `DATABASE_URL`, `JWT_SECRET` (≥ 32 random bytes), `CORS_ORIGINS` (the frontend URL), `NODE_ENV=production` |
+| Build | `npm ci --include=dev --legacy-peer-deps && npm run prisma:generate --workspace backend && npm run build --workspace backend` |
+| Start | `npm run db:deploy --workspace backend && npm run start:prod --workspace backend` |
+| Health check | `/api/health` |
+| `DATABASE_URL` | Neon **direct** connection URI for the intended project, branch, and database |
+| `JWT_SECRET` | Random secret of at least 32 bytes; store it only in Render's environment settings |
+| `CORS_ORIGINS` | `https://salary-management-fe.onrender.com` |
+| `NODE_ENV` | `production` |
 
-One-off after the first deploy (from your machine, pointing `DATABASE_URL` at the new database):
+The Prisma schema uses `DATABASE_URL` for the app and CLI. The start command applies committed migrations before starting NestJS, so the API uses a direct Neon connection rather than a pooled endpoint for this deployment. The API and seed must target the same Neon project, branch, and database.
+
+Render's separate pre-deploy command is unavailable on its free web-service plan, so migrations run in the start command here. This is the configuration used for the current deployment.
+
+### Frontend web service
+
+| Setting | Value |
+|---|---|
+| Build | `npm ci --include=dev --legacy-peer-deps && npm run build --workspace frontend` |
+| Start | `npm run start --workspace frontend` |
+| `API_PROXY_TARGET` | `https://salary-management-bs10.onrender.com` (no `/api`) |
+
+`API_PROXY_TARGET` is read by `next.config.mjs` at build time. Redeploy the frontend after changing it.
+
+The free Render web-service plan spins services down after inactivity, so the first request after idle can be slow. It is suitable for a demo, not a production payroll system. See [Render's free service limitations](https://render.com/docs/free).
+
+## Seed and bootstrap
+
+Run one-off setup from the repository root with `DATABASE_URL` set to the Neon direct URI for the same project, branch, and database used by the API:
+
 ```bash
 npm run db:seed --workspace backend
-NODE_ENV=development INITIAL_HR_EMAIL=... INITIAL_HR_PASSWORD=... npm run auth:bootstrap --workspace backend
 ```
 
-**Frontend service** (repository root as the working directory, or Vercel with root directory `frontend`):
+The deterministic seed creates 10,000 synthetic employee records in batches and is safe to rerun. Existing employee codes are skipped.
 
-| Setting | Value |
-|---|---|
-| Build | `npm ci --legacy-peer-deps && npm run build --workspace frontend` |
-| Start | `npm run start --workspace frontend` |
-| Env | `API_PROXY_TARGET` = the API's public origin, e.g. `https://acme-salary-api.onrender.com` (no `/api`) |
+To create the first HR manager, put `INITIAL_HR_EMAIL` and a unique 12–72 byte `INITIAL_HR_PASSWORD` in the ignored local `backend/.env`, with `NODE_ENV=development` and the same `DATABASE_URL`, then run:
 
-`API_PROXY_TARGET` is read at build time by `next.config.mjs`; redeploy the frontend if it changes.
+```bash
+npm run auth:bootstrap --workspace backend
+```
 
-## Checklist before real salary data
-TLS everywhere, secrets in the platform's secret store, rate limiting on `/api/auth/login`, SSO or password
-reset, backups and point-in-time recovery on the database, and log shipping for the API.
+Remove the bootstrap email and password from the local environment file after the account is created. Never commit `.env` files or paste credentials into documentation.
+
+## Before using real salary data
+
+This is a synthetic-data assessment demo. Before real use, add operational controls such as login rate limiting, SSO or password recovery, backups and point-in-time recovery, and centralized logging. Review security and privacy requirements for the organization.

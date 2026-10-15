@@ -121,7 +121,9 @@ Request validation errors and recognized database input/range errors return 400 
 
 ## Assessment delivery
 
-The repository contains deployment instructions and CI, but no live deployment URL or recorded demo is committed. Add those to the submission after deploying with the hosting account you choose.
+The deployed application is available at [salary-management-fe.onrender.com](https://salary-management-fe.onrender.com); the API readiness endpoint is [salary-management-bs10.onrender.com/api/health](https://salary-management-bs10.onrender.com/api/health). Sign-in and the seeded employee directory were manually confirmed after deployment.
+
+The assessment asks for a video demo; a recording is not included yet. The requirements brief was written after the first working version, as documented in [PROCESS.md](docs/PROCESS.md). The repository was reset as a fresh repository, so its history does not show the implementation's original incremental development.
 
 ## Security notes
 Passwords are bcrypt-hashed; sessions are short-lived HS256 JWTs in HttpOnly, SameSite=Strict cookies; every

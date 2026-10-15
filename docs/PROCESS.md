@@ -1,7 +1,9 @@
 # Project Delivery
 
-A working application was committed before `docs/REQUIREMENTS.md` was added. The requirements brief was written afterward to document the complete product goal, scope, boundaries and acceptance criteria. The Git history preserves that sequence; it should not be presented as requirements having preceded implementation.
+A working application existed before `docs/REQUIREMENTS.md` was written. The brief was added retrospectively to document the product goal, scope, boundaries and acceptance criteria. It should not be presented as having preceded implementation.
 
-Subsequent commits completed and hardened the employee lifecycle, salary insights, validation, audit behavior, tests and deployment guidance. The repository includes local setup instructions, database migrations, a deterministic 10,000-employee seed, automated checks and deployment notes.
+The GitHub repository was later initialized as a fresh repository, discarding the earlier implementation history. Its original incremental development cannot be reconstructed. Later commits should be described only as work performed after that reset.
 
-Technical choices and local benchmark results are documented in [`DECISIONS.md`](DECISIONS.md). Add deployment-environment measurements, a deployment URL and a demo recording to the handoff when available.
+The application is deployed at [salary-management-fe.onrender.com](https://salary-management-fe.onrender.com), with the API health endpoint at [salary-management-bs10.onrender.com/api/health](https://salary-management-bs10.onrender.com/api/health). Sign-in and employee data visibility were manually confirmed after seeding the same Neon database branch used by the API. No video demo has been recorded yet.
+
+Technical choices and local benchmark results are documented in [`DECISIONS.md`](DECISIONS.md). The local benchmark is not a production measurement.
