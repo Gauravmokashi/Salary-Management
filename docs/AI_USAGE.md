@@ -142,7 +142,7 @@ AI was used as a development assistant, not as the final authority. I reviewed t
 
 **AI contribution:** Assisted with documentation review, consistency checks, architecture explanations, setup instructions, and identifying unsupported claims.
 
-**Engineering decision:** Preserved the actual development chronology: the requirements document was written retrospectively, after the initial working application. The application is now deployed; a video demo remains outstanding. A local benchmark is recorded in `DECISIONS.md`.
+**Engineering decision:** Preserved the actual development chronology: the requirements document was written retrospectively, after the initial working application. The application is now deployed, and a video demo has been recorded for sharing by email. A local benchmark is recorded in `DECISIONS.md`.
 
 ## 3. Verification and Evidence
 
@@ -156,7 +156,7 @@ AI-generated suggestions were reviewed against the implementation and available 
 | Manual production check | HR sign-in and the seeded employee directory were confirmed working at the deployed URLs after aligning the API and seed with the same Neon database branch. |
 | Lint and PostgreSQL integration tests | No successful run is recorded for revision `9038844`. |
 | Local API performance | Benchmarked over 50 requests per endpoint against 10,002 employee rows; details in `DECISIONS.md`. Not an exact 10,000-row snapshot or production benchmark. |
-| Video demo | Not recorded yet. |
+| Video demo | Recorded; to be shared separately by email. |
 
 The repository was reinitialized after earlier development, so those commits are unavailable. Application revision `9038844` was represented by the fresh repository's initial commit. Later documentation updates do not reconstruct the original incremental development. No test or lint result should be inferred from the presence of test files or CI configuration alone.
 
@@ -172,7 +172,7 @@ AI accelerated implementation and review, but the application was not considered
 
 ## 5. Known Limitations
 
-The application is deployed at [salary-management-fe.onrender.com](https://salary-management-fe.onrender.com), with API health at [salary-management-bs10.onrender.com/api/health](https://salary-management-bs10.onrender.com/api/health). A video demo remains to be recorded. Live FX integration, payroll execution, SSO, password reset, login rate limiting, and server-side token revocation are outside the current scope.
+The application is deployed at [salary-management-fe.onrender.com](https://salary-management-fe.onrender.com), with API health at [salary-management-bs10.onrender.com/api/health](https://salary-management-bs10.onrender.com/api/health). A video demo has been recorded for sharing separately by email. Live FX integration, payroll execution, SSO, password reset, login rate limiting, and server-side token revocation are outside the current scope.
 
 Refer to [DECISIONS.md](DECISIONS.md) for architectural trade-offs and performance status.
 
